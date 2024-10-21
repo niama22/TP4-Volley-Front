@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Search Icon -->
+    <item
+        android:id="@+id/action_search"
+        android:title="Search"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        android:icon="@drawable/magnifier"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_add_student"
+        android:title="Ajouter Étudiant"
+        android:icon="@drawable/add"
+        app:showAsAction="never" />
+
+
+    <item
+        android:id="@+id/action_share"
+        android:title="Share"
+        android:icon="@drawable/share"
+        app:showAsAction="never" />
+
+</menu>

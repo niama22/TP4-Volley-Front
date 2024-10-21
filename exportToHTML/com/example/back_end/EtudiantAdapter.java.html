@@ -1,0 +1,312 @@
+<html>
+<head>
+<title>EtudiantAdapter.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6897bb;}
+.s3 { color: #808080;}
+.s4 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+EtudiantAdapter.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.example.back_end</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">android.app.AlertDialog</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.app.ProgressDialog</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.content.Context</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.content.Intent</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.graphics.Bitmap</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.graphics.Canvas</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.net.Uri</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.provider.MediaStore</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.util.Base64</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.view.LayoutInflater</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.view.View</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.view.ViewGroup</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.widget.ArrayAdapter</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.widget.Button</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.widget.ImageView</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.widget.RadioButton</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.widget.RadioGroup</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.widget.Spinner</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.widget.TextView</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.widget.Toast</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">androidx.annotation.NonNull</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">androidx.recyclerview.widget.ItemTouchHelper</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">androidx.recyclerview.widget.RecyclerView</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">com.android.volley.Request</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">com.android.volley.RequestQueue</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">com.android.volley.toolbox.StringRequest</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">com.android.volley.toolbox.Volley</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">java.io.ByteArrayOutputStream</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.io.IOException</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.HashMap</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.List</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.Map</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">beans.Etudiant</span><span class="s0">;</span>
+
+<span class="s0">public class </span><span class="s1">EtudiantAdapter </span><span class="s0">extends </span><span class="s1">RecyclerView.Adapter&lt;EtudiantAdapter.ViewHolder&gt; {</span>
+
+    <span class="s0">private </span><span class="s1">List&lt;Etudiant&gt; etudiantList</span><span class="s0">;</span>
+    <span class="s0">private </span><span class="s1">Context context</span><span class="s0">;</span>
+    <span class="s0">private static final int </span><span class="s1">PICK_IMAGE_REQUEST = </span><span class="s2">1</span><span class="s0">;</span>
+    <span class="s0">private </span><span class="s1">Bitmap selectedBitmap</span><span class="s0">;</span>
+
+    <span class="s0">public </span><span class="s1">EtudiantAdapter(Context context</span><span class="s0">, </span><span class="s1">List&lt;Etudiant&gt; etudiantList) {</span>
+        <span class="s0">this</span><span class="s1">.context = context</span><span class="s0">;</span>
+        <span class="s0">this</span><span class="s1">.etudiantList = etudiantList</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@NonNull</span>
+    <span class="s1">@Override</span>
+    <span class="s0">public </span><span class="s1">ViewHolder onCreateViewHolder(@NonNull ViewGroup parent</span><span class="s0">, int </span><span class="s1">viewType) {</span>
+        <span class="s1">View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item</span><span class="s0">, </span><span class="s1">parent</span><span class="s0">, false</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s0">return new </span><span class="s1">ViewHolder(view)</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public void </span><span class="s1">onBindViewHolder(@NonNull ViewHolder holder</span><span class="s0">, int </span><span class="s1">position) {</span>
+        <span class="s1">Etudiant etudiant = etudiantList.get(position)</span><span class="s0">;</span>
+        <span class="s1">holder.nom.setText(etudiant.getNom())</span><span class="s0">;</span>
+        <span class="s1">holder.prenom.setText(etudiant.getPrenom())</span><span class="s0">;</span>
+        <span class="s1">holder.ville.setText(etudiant.getVille())</span><span class="s0">;</span>
+        <span class="s1">holder.sexe.setText(etudiant.getSexe())</span><span class="s0">;</span>
+        <span class="s1">holder.imageView.setImageBitmap(etudiant.getImage())</span><span class="s0">;</span>
+
+        <span class="s1">holder.itemView.setOnClickListener(v -&gt; showOptionsDialog(etudiant</span><span class="s0">, </span><span class="s1">position))</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public int </span><span class="s1">getItemCount() {</span>
+        <span class="s0">return </span><span class="s1">etudiantList.size()</span><span class="s0">;</span>
+    <span class="s1">}</span>
+    <span class="s0">public </span><span class="s1">ItemTouchHelper.SimpleCallback getSwipeToDeleteCallback() {</span>
+        <span class="s0">return new </span><span class="s1">ItemTouchHelper.SimpleCallback(</span><span class="s2">0</span><span class="s0">, </span><span class="s1">ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public boolean </span><span class="s1">onMove(@NonNull RecyclerView recyclerView</span><span class="s0">, </span><span class="s1">@NonNull RecyclerView.ViewHolder viewHolder</span><span class="s0">, </span><span class="s1">@NonNull RecyclerView.ViewHolder target) {</span>
+                <span class="s3">// We are not supporting move, so return false</span>
+                <span class="s0">return false;</span>
+            <span class="s1">}</span>
+
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onSwiped(@NonNull RecyclerView.ViewHolder viewHolder</span><span class="s0">, int </span><span class="s1">direction) {</span>
+                <span class="s3">// Get the swiped position</span>
+                <span class="s0">int </span><span class="s1">position = viewHolder.getAdapterPosition()</span><span class="s0">;</span>
+                <span class="s1">Etudiant etudiant = etudiantList.get(position)</span><span class="s0">;</span>
+
+                <span class="s3">// Call the delete logic</span>
+                <span class="s1">confirmDelete(etudiant</span><span class="s0">, </span><span class="s1">position)</span><span class="s0">;</span>
+            <span class="s1">}</span>
+
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onChildDraw(@NonNull Canvas c</span><span class="s0">, </span><span class="s1">@NonNull RecyclerView recyclerView</span><span class="s0">, </span><span class="s1">@NonNull RecyclerView.ViewHolder viewHolder</span><span class="s0">, float </span><span class="s1">dX</span><span class="s0">, float </span><span class="s1">dY</span><span class="s0">, int </span><span class="s1">actionState</span><span class="s0">, boolean </span><span class="s1">isCurrentlyActive) {</span>
+                <span class="s0">super</span><span class="s1">.onChildDraw(c</span><span class="s0">, </span><span class="s1">recyclerView</span><span class="s0">, </span><span class="s1">viewHolder</span><span class="s0">, </span><span class="s1">dX</span><span class="s0">, </span><span class="s1">dY</span><span class="s0">, </span><span class="s1">actionState</span><span class="s0">, </span><span class="s1">isCurrentlyActive)</span><span class="s0">;</span>
+                <span class="s3">// Optionally, you can add a visual effect while swiping (e.g., background color or icon)</span>
+            <span class="s1">}</span>
+        <span class="s1">}</span><span class="s0">;</span>
+    <span class="s1">}</span>
+    <span class="s0">private void </span><span class="s1">showModifyDialog(Etudiant etudiant) {</span>
+        <span class="s1">android.app.Dialog dialog = </span><span class="s0">new </span><span class="s1">android.app.Dialog(context)</span><span class="s0">;</span>
+        <span class="s1">dialog.setContentView(R.layout.dialog_modify)</span><span class="s0">;</span>
+
+        <span class="s1">TextView nom = dialog.findViewById(R.id.et_nom)</span><span class="s0">;</span>
+        <span class="s1">TextView prenom = dialog.findViewById(R.id.et_prenom)</span><span class="s0">;</span>
+        <span class="s1">RadioGroup sexeGroup = dialog.findViewById(R.id.rg_sexe)</span><span class="s0">;</span>
+        <span class="s1">ImageView imageView = dialog.findViewById(R.id.image_view)</span><span class="s0">;</span>
+        <span class="s1">Spinner spinnerVille = dialog.findViewById(R.id.ed_ville)</span><span class="s0">;</span>
+        <span class="s1">Button btnChooseImage = dialog.findViewById(R.id.btn_choose_image)</span><span class="s0">;</span>
+        <span class="s1">Button btnSubmit = dialog.findViewById(R.id.btn_update)</span><span class="s0">;</span>
+
+        <span class="s1">nom.setText(etudiant.getNom())</span><span class="s0">;</span>
+        <span class="s1">prenom.setText(etudiant.getPrenom())</span><span class="s0">;</span>
+
+        <span class="s1">ArrayAdapter&lt;CharSequence&gt; adapter = ArrayAdapter.createFromResource(context</span><span class="s0">,</span>
+                <span class="s1">R.array.cities_array</span><span class="s0">, </span><span class="s1">android.R.layout.simple_spinner_item)</span><span class="s0">;</span>
+        <span class="s1">adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)</span><span class="s0">;</span>
+        <span class="s1">spinnerVille.setAdapter(adapter)</span><span class="s0">;</span>
+
+        <span class="s0">int </span><span class="s1">spinnerPosition = adapter.getPosition(etudiant.getVille())</span><span class="s0">;</span>
+        <span class="s1">spinnerVille.setSelection(spinnerPosition)</span><span class="s0">;</span>
+
+        <span class="s0">if </span><span class="s1">(</span><span class="s4">&quot;homme&quot;</span><span class="s1">.equals(etudiant.getSexe())) {</span>
+            <span class="s1">((RadioButton) sexeGroup.findViewById(R.id.rb_homme)).setChecked(</span><span class="s0">true</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+            <span class="s1">((RadioButton) sexeGroup.findViewById(R.id.rb_femme)).setChecked(</span><span class="s0">true</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">imageView.setImageBitmap(etudiant.getImage())</span><span class="s0">;</span>
+
+        <span class="s1">btnChooseImage.setOnClickListener(v -&gt; {</span>
+            <span class="s1">Intent intent = </span><span class="s0">new </span><span class="s1">Intent()</span><span class="s0">;</span>
+            <span class="s1">intent.setType(</span><span class="s4">&quot;image/*&quot;</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">intent.setAction(Intent.ACTION_GET_CONTENT)</span><span class="s0">;</span>
+            <span class="s1">((MainActivity) context).startActivityForResult(Intent.createChooser(intent</span><span class="s0">, </span><span class="s4">&quot;Select Picture&quot;</span><span class="s1">)</span><span class="s0">, </span><span class="s1">PICK_IMAGE_REQUEST)</span><span class="s0">;</span>
+        <span class="s1">})</span><span class="s0">;</span>
+
+        <span class="s1">btnSubmit.setOnClickListener(v -&gt; {</span>
+            <span class="s1">String updatedNom = nom.getText().toString()</span><span class="s0">;</span>
+            <span class="s1">String updatedPrenom = prenom.getText().toString()</span><span class="s0">;</span>
+            <span class="s1">String updatedVille = spinnerVille.getSelectedItem().toString()</span><span class="s0">;</span>
+            <span class="s1">String updatedSexe = ((RadioButton) dialog.findViewById(sexeGroup.getCheckedRadioButtonId())).getText().toString()</span><span class="s0">;</span>
+
+            <span class="s0">if </span><span class="s1">(selectedBitmap == </span><span class="s0">null</span><span class="s1">) {</span>
+                <span class="s1">selectedBitmap = etudiant.getImage()</span><span class="s0">;</span>
+            <span class="s1">}</span>
+
+            <span class="s1">ByteArrayOutputStream byteArrayOutputStream = </span><span class="s0">new </span><span class="s1">ByteArrayOutputStream()</span><span class="s0">;</span>
+            <span class="s1">selectedBitmap.compress(Bitmap.CompressFormat.JPEG</span><span class="s0">, </span><span class="s2">100</span><span class="s0">, </span><span class="s1">byteArrayOutputStream)</span><span class="s0">;</span>
+            <span class="s1">String encodedImage = Base64.encodeToString(byteArrayOutputStream.toByteArray()</span><span class="s0">, </span><span class="s1">Base64.DEFAULT)</span><span class="s0">;</span>
+
+            <span class="s1">updateEtudiant(etudiant.getId()</span><span class="s0">, </span><span class="s1">updatedNom</span><span class="s0">, </span><span class="s1">updatedPrenom</span><span class="s0">, </span><span class="s1">updatedVille</span><span class="s0">, </span><span class="s1">updatedSexe</span><span class="s0">, </span><span class="s1">encodedImage)</span><span class="s0">;</span>
+            <span class="s1">dialog.dismiss()</span><span class="s0">;</span>
+        <span class="s1">})</span><span class="s0">;</span>
+
+        <span class="s1">dialog.show()</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+    <span class="s0">public void </span><span class="s1">onActivityResult(</span><span class="s0">int </span><span class="s1">requestCode</span><span class="s0">, int </span><span class="s1">resultCode</span><span class="s0">, </span><span class="s1">Intent data) {</span>
+        <span class="s0">if </span><span class="s1">(requestCode == PICK_IMAGE_REQUEST &amp;&amp; resultCode == -</span><span class="s2">1 </span><span class="s1">&amp;&amp; data != </span><span class="s0">null </span><span class="s1">&amp;&amp; data.getData() != </span><span class="s0">null</span><span class="s1">) {</span>
+            <span class="s1">Uri filePath = data.getData()</span><span class="s0">;</span>
+            <span class="s0">try </span><span class="s1">{</span>
+                <span class="s1">selectedBitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver()</span><span class="s0">, </span><span class="s1">filePath)</span><span class="s0">;</span>
+            <span class="s1">} </span><span class="s0">catch </span><span class="s1">(IOException e) {</span>
+                <span class="s1">e.printStackTrace()</span><span class="s0">;</span>
+            <span class="s1">}</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">private void </span><span class="s1">updateEtudiant(</span><span class="s0">int </span><span class="s1">id</span><span class="s0">, </span><span class="s1">String nom</span><span class="s0">, </span><span class="s1">String prenom</span><span class="s0">, </span><span class="s1">String ville</span><span class="s0">, </span><span class="s1">String sexe</span><span class="s0">, </span><span class="s1">String image) {</span>
+        <span class="s1">ProgressDialog progressDialog = </span><span class="s0">new </span><span class="s1">ProgressDialog(context)</span><span class="s0">;</span>
+        <span class="s1">progressDialog.setMessage(</span><span class="s4">&quot;Updating...&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">progressDialog.show()</span><span class="s0">;</span>
+
+        <span class="s1">String url = </span><span class="s4">&quot;http://10.0.2.2/php-mobile2/controller/updateEtudiant.php&quot;</span><span class="s0">; </span><span class="s3">// Change this to your server endpoint</span>
+        <span class="s1">RequestQueue requestQueue = Volley.newRequestQueue(context)</span><span class="s0">;</span>
+
+        <span class="s1">StringRequest stringRequest = </span><span class="s0">new </span><span class="s1">StringRequest(Request.Method.POST</span><span class="s0">, </span><span class="s1">url</span><span class="s0">,</span>
+                <span class="s1">response -&gt; {</span>
+                    <span class="s1">progressDialog.dismiss()</span><span class="s0">;</span>
+                    <span class="s3">// Notify that the student information has been updated</span>
+                    <span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s2">0</span><span class="s0">; </span><span class="s1">i &lt; etudiantList.size()</span><span class="s0">; </span><span class="s1">i++) {</span>
+                        <span class="s0">if </span><span class="s1">(etudiantList.get(i).getId() == id) {</span>
+                            <span class="s1">etudiantList.get(i).setNom(nom)</span><span class="s0">;</span>
+                            <span class="s1">etudiantList.get(i).setPrenom(prenom)</span><span class="s0">;</span>
+                            <span class="s1">etudiantList.get(i).setVille(ville)</span><span class="s0">;</span>
+                            <span class="s1">etudiantList.get(i).setSexe(sexe)</span><span class="s0">;</span>
+                            <span class="s1">etudiantList.get(i).setImage(selectedBitmap)</span><span class="s0">; </span><span class="s3">// Update image</span>
+                            <span class="s1">notifyItemChanged(i)</span><span class="s0">; </span><span class="s3">// Notify adapter of the updated item</span>
+                            <span class="s0">break;</span>
+                        <span class="s1">}</span>
+                    <span class="s1">}</span>
+                    <span class="s1">Toast.makeText(context</span><span class="s0">, </span><span class="s4">&quot;Étudiant mis à jour avec succès&quot;</span><span class="s0">, </span><span class="s1">Toast.LENGTH_SHORT).show()</span><span class="s0">;</span>
+                <span class="s1">}</span><span class="s0">,</span>
+                <span class="s1">error -&gt; {</span>
+                    <span class="s1">progressDialog.dismiss()</span><span class="s0">;</span>
+                    <span class="s1">Toast.makeText(context</span><span class="s0">, </span><span class="s4">&quot;Erreur lors de la mise à jour&quot;</span><span class="s0">, </span><span class="s1">Toast.LENGTH_SHORT).show()</span><span class="s0">;</span>
+                <span class="s1">}) {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">protected </span><span class="s1">Map&lt;String</span><span class="s0">, </span><span class="s1">String&gt; getParams() {</span>
+                <span class="s1">Map&lt;String</span><span class="s0">, </span><span class="s1">String&gt; params = </span><span class="s0">new </span><span class="s1">HashMap&lt;&gt;()</span><span class="s0">;</span>
+                <span class="s1">params.put(</span><span class="s4">&quot;id&quot;</span><span class="s0">, </span><span class="s1">String.valueOf(id))</span><span class="s0">;</span>
+                <span class="s1">params.put(</span><span class="s4">&quot;nom&quot;</span><span class="s0">, </span><span class="s1">nom)</span><span class="s0">;</span>
+                <span class="s1">params.put(</span><span class="s4">&quot;prenom&quot;</span><span class="s0">, </span><span class="s1">prenom)</span><span class="s0">;</span>
+                <span class="s1">params.put(</span><span class="s4">&quot;ville&quot;</span><span class="s0">, </span><span class="s1">ville)</span><span class="s0">;</span>
+                <span class="s1">params.put(</span><span class="s4">&quot;sexe&quot;</span><span class="s0">, </span><span class="s1">sexe)</span><span class="s0">;</span>
+                <span class="s1">params.put(</span><span class="s4">&quot;image&quot;</span><span class="s0">, </span><span class="s1">image)</span><span class="s0">;</span>
+                <span class="s0">return </span><span class="s1">params</span><span class="s0">;</span>
+            <span class="s1">}</span>
+        <span class="s1">}</span><span class="s0">;</span>
+
+        <span class="s1">requestQueue.add(stringRequest)</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public void </span><span class="s1">setSelectedBitmap(Bitmap bitmap) {</span>
+        <span class="s0">this</span><span class="s1">.selectedBitmap = bitmap</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public </span><span class="s1">Bitmap getSelectedBitmap() {</span>
+        <span class="s0">return </span><span class="s1">selectedBitmap</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public static class </span><span class="s1">ViewHolder </span><span class="s0">extends </span><span class="s1">RecyclerView.ViewHolder {</span>
+        <span class="s1">TextView nom</span><span class="s0">, </span><span class="s1">prenom</span><span class="s0">, </span><span class="s1">ville</span><span class="s0">, </span><span class="s1">sexe</span><span class="s0">;</span>
+        <span class="s1">ImageView imageView</span><span class="s0">;</span>
+
+        <span class="s0">public </span><span class="s1">ViewHolder(View itemView) {</span>
+            <span class="s0">super</span><span class="s1">(itemView)</span><span class="s0">;</span>
+            <span class="s1">nom = itemView.findViewById(R.id.nom)</span><span class="s0">;</span>
+            <span class="s1">prenom = itemView.findViewById(R.id.prenom)</span><span class="s0">;</span>
+            <span class="s1">ville = itemView.findViewById(R.id.ville)</span><span class="s0">;</span>
+            <span class="s1">sexe = itemView.findViewById(R.id.sexe)</span><span class="s0">;</span>
+            <span class="s1">imageView = itemView.findViewById(R.id.circleImageView)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">private void </span><span class="s1">showOptionsDialog(Etudiant etudiant</span><span class="s0">, int </span><span class="s1">position) {</span>
+
+        <span class="s1">AlertDialog.Builder builder = </span><span class="s0">new </span><span class="s1">AlertDialog.Builder(context)</span><span class="s0">;</span>
+        <span class="s1">builder.setTitle(</span><span class="s4">&quot;Options&quot;</span><span class="s1">)</span>
+                <span class="s1">.setItems(</span><span class="s0">new </span><span class="s1">CharSequence[]{</span><span class="s4">&quot;Modify&quot;</span><span class="s1">}</span><span class="s0">, </span><span class="s1">(dialog</span><span class="s0">, </span><span class="s1">which) -&gt; {</span>
+                    <span class="s0">if </span><span class="s1">(which == </span><span class="s2">0</span><span class="s1">) {</span>
+                        <span class="s1">showModifyDialog(etudiant)</span><span class="s0">;</span>
+                    <span class="s1">}</span>
+                <span class="s1">})</span>
+                <span class="s1">.show()</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+    <span class="s0">private void </span><span class="s1">confirmDelete(Etudiant etudiant</span><span class="s0">, int </span><span class="s1">position) {</span>
+        <span class="s1">android.app.Dialog dialog = </span><span class="s0">new </span><span class="s1">android.app.Dialog(context)</span><span class="s0">;</span>
+        <span class="s1">dialog.setContentView(R.layout.dialog_confirm_delete)</span><span class="s0">;</span>
+
+        <span class="s1">TextView confirmationMessage = dialog.findViewById(R.id.confirmation_message)</span><span class="s0">;</span>
+        <span class="s1">confirmationMessage.setText(</span><span class="s4">&quot;Êtes-vous sûr de vouloir supprimer &quot; </span><span class="s1">+ etudiant.getNom() + </span><span class="s4">&quot;?&quot;</span><span class="s1">)</span><span class="s0">;</span>
+
+        <span class="s1">Button btnCancel = dialog.findViewById(R.id.btn_cancel)</span><span class="s0">;</span>
+        <span class="s1">Button btnConfirm = dialog.findViewById(R.id.btn_confirm)</span><span class="s0">;</span>
+
+        <span class="s1">btnCancel.setOnClickListener(v -&gt; {dialog.dismiss()</span><span class="s0">;</span>
+            <span class="s1">notifyItemChanged(position)</span><span class="s0">;</span><span class="s1">})</span><span class="s0">;</span>
+
+        <span class="s1">btnConfirm.setOnClickListener(v -&gt; {</span>
+            <span class="s1">deleteEtudiant(etudiant.getId()</span><span class="s0">, </span><span class="s1">position)</span><span class="s0">;</span>
+            <span class="s1">dialog.dismiss()</span><span class="s0">;</span>
+
+        <span class="s1">})</span><span class="s0">;</span>
+
+        <span class="s1">dialog.show()</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">private void </span><span class="s1">deleteEtudiant(</span><span class="s0">int </span><span class="s1">id</span><span class="s0">, int </span><span class="s1">position) {</span>
+        <span class="s1">RequestQueue queue = Volley.newRequestQueue(context)</span><span class="s0">;</span>
+        <span class="s1">String url = </span><span class="s4">&quot;http://10.0.2.2/php-mobile2/controller/deleteEtudiant.php?id=&quot; </span><span class="s1">+ id</span><span class="s0">;</span>
+
+        <span class="s1">StringRequest stringRequest = </span><span class="s0">new </span><span class="s1">StringRequest(Request.Method.GET</span><span class="s0">, </span><span class="s1">url</span><span class="s0">,</span>
+                <span class="s1">response -&gt; {</span>
+                    <span class="s1">etudiantList.remove(position)</span><span class="s0">;</span>
+                    <span class="s1">notifyItemRemoved(position)</span><span class="s0">;</span>
+                    <span class="s1">Toast.makeText(context</span><span class="s0">, </span><span class="s4">&quot;Étudiant supprimé avec succès&quot;</span><span class="s0">, </span><span class="s1">Toast.LENGTH_SHORT).show()</span><span class="s0">;</span>
+                <span class="s1">}</span><span class="s0">,</span>
+                <span class="s1">error -&gt; {</span>
+                    <span class="s1">Toast.makeText(context</span><span class="s0">, </span><span class="s4">&quot;Erreur lors de la suppression de l'étudiant&quot;</span><span class="s0">, </span><span class="s1">Toast.LENGTH_SHORT).show()</span><span class="s0">;</span>
+                <span class="s1">})</span><span class="s0">;</span>
+
+        <span class="s1">queue.add(stringRequest)</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+<span class="s1">}</span></pre>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">back-end</string>
+    <string-array name="villes_array">
+        <item>Tanger</item>
+        <item>El jadida</item>
+        <item>Casablanca</item>
+        <item>Rabat</item>
+    </string-array>
+    <string-array name="cities_array">
+        <item>Tanger</item>
+        <item>El jadida</item>
+        <item>Casablanca</item>
+        <item>Rabat</item>
+        <!-- Add more cities as needed -->
+    </string-array>
+</resources>

@@ -1,0 +1,13 @@
+<resources>
+    <style name="text">
+        <item name="android:textSize">17sp</item> <!-- Utilisez "sp" pour les tailles de texte -->
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:textColor">@android:color/holo_green_dark</item>
+    </style>
+
+    <style name="input">
+        <item name="android:paddingBottom">20dp</item>
+        <item name="android:textColor">@android:color/black</item> <!-- Ajoutez une couleur de texte par défaut -->
+        <item name="android:textSize">16sp</item> <!-- Exemple d'ajout d'une taille de texte -->
+    </style>
+</resources>
